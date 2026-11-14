@@ -187,6 +187,11 @@ Format kode: 4–20 karakter huruf/angka/tanda `-` (mis. `RA-7A-01`). Pilih sala
 - **Impor CSV:** `cd backend && python -m app.scripts.create_students students.example.csv`
   (kolom: `student_code,full_name,class_name`).
 
+## Deploy web (satu link)
+
+Panduan membuat link web publik (Supabase + Vercel, frontend dan backend dalam satu domain) ada di
+[docs/deploy-web.md](docs/deploy-web.md). Setup database cukup sekali tempel: [supabase/setup_all.sql](supabase/setup_all.sql).
+
 ## Menjalankan backend
 
 ```bash
