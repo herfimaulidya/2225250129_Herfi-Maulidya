@@ -6,8 +6,9 @@ import fs from 'node:fs';
 const APP = process.env.APP_URL || 'http://localhost:5173';
 const API = process.env.API_URL || 'http://127.0.0.1:8000';
 const MOCK = process.env.MOCK_URL || 'http://127.0.0.1:54321';
-const SERVICE = 'e2e-service-role-key';
-const ADMIN = 'e2e-admin';
+const SERVICE = process.env.E2E_SERVICE_KEY || 'e2e-service-role-key';
+const ADMIN = process.env.E2E_ADMIN_KEY || 'e2e-admin';
+const LIVE = Boolean(process.env.E2E_SERVICE_KEY); // true = Supabase sungguhan (tanpa reset)
 const SHOTS = new URL('./screens/', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
 fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -21,10 +22,10 @@ async function http(url, opts = {}) {
   return { status: r.status, body: t ? JSON.parse(t) : null };
 }
 const sessionItems = async (sid) =>
-  (await http(`${MOCK}/rest/v1/activity_sessions?id=eq.${sid}`, { headers: { Authorization: `Bearer ${SERVICE}` } })).body[0].items;
+  (await http(`${MOCK}/rest/v1/activity_sessions?id=eq.${sid}`, { headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}` } })).body[0].items;
 
 async function setup() {
-  await http(`${MOCK}/__e2e/reset`, { method: 'POST' });
+  if (!LIVE) await http(`${MOCK}/__e2e/reset`, { method: 'POST' });
   for (const [code, name, cls] of [['RA-7A-01', 'Ayu Lestari', '7A'], ['RA-7A-02', 'Budi Santoso', '7A']]) {
     const r = await http(`${API}/api/admin/students`, {
       method: 'POST', headers: { 'X-Admin-Key': ADMIN, 'Content-Type': 'application/json' },
@@ -407,7 +408,9 @@ async function run() {
   await page.goto(`${APP}/#/admin`);
   await page.locator('input[type=password]').fill(ADMIN);
   await btn(page, 'Buka').click();
-  await page.getByText('2 siswa terdaftar').waitFor();
+  // Di Supabase sungguhan bisa ada siswa lain, jadi cukup pastikan kedua siswa uji tampil.
+  await page.getByText(LIVE ? /\d+ siswa terdaftar/ : '2 siswa terdaftar').waitFor();
+  await page.getByText('RA-7A-02', { exact: true }).waitFor();
   await shot(page, 'd-20-admin');
   log('halaman guru OK');
 

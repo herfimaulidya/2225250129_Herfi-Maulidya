@@ -99,10 +99,36 @@ Bug yang ditemukan lewat E2E dan sudah diperbaiki:
 - Notifikasi XP/lencana menumpuk dan menutupi konten.
 - Ubin emas 3D tampak gelap, dan ikon Final Quest di peta tertimpa garis jalur.
 
-**Belum diuji** (membutuhkan kredensial/perangkat yang tidak tersedia saat pengembangan):
+### Uji di website sungguhan (Vercel + Supabase), 14 November 2026
 
-- Proyek Supabase **sungguhan**. Server tiruan meniru perilakunya, tetapi SQL RLS asli baru terbukti setelah
-  dijalankan di Supabase. Kerjakan bagian "Keamanan" di daftar uji manual.
+Link: <https://royal-adventure-one.vercel.app>. `setup_all.sql` dijalankan di proyek Supabase asli
+(58 soal, RLS aktif di 14 tabel).
+
+| Pemeriksaan | Hasil |
+|---|---|
+| `/api/health` | `supabase_configured: true` |
+| Login kode valid / kode tidak terdaftar | masuk / ditolak (401) |
+| RLS dengan token siswa langsung ke REST Supabase | `profiles` hanya baris sendiri; `quiz_questions`, `activity_sessions` → *permission denied*; insert `xp_ledger` dan update `user_stats` → *permission denied*; anon tanpa login → *permission denied* |
+| Endpoint privat tanpa token | 401 |
+| Robot E2E pada link asli | lulus: login, kunci level, 4 misi, lencana, Math Lab, latihan L1 & L3, 5 permainan, Final Quest (resume setelah reload, skor 90), 7/7 lencana, XP tetap setelah login ulang, data siswa B terpisah |
+| Hapus siswa lewat halaman guru | data siswa ikut terhapus (cascade) |
+
+Cara menjalankan robot ke link asli (bash):
+
+```bash
+cd e2e && APP_URL=https://<link> API_URL=https://<link> MOCK_URL=https://<ref>.supabase.co \
+  E2E_SERVICE_KEY=<service_role key> E2E_ADMIN_KEY=<ADMIN_API_KEY> npm test
+```
+
+Robot membuat siswa uji `RA-7A-01`/`RA-7A-02`; hapus lewat halaman guru setelah selesai.
+
+Catatan jujur: pada uji pertama, langkah terakhir (halaman guru) gagal. Penyebabnya robot mengharapkan tepat
+"2 siswa terdaftar", padahal database asli juga berisi siswa demo; halamannya sendiri tampil benar (4 siswa).
+Pengecekan sudah diganti menjadi "siswa uji tampil di tabel". Uji ulang dengan pengecekan baru terhenti karena disk
+komputer penguji penuh, jadi langkah halaman guru versi baru belum terbukti otomatis.
+
+**Belum diuji:**
+
 - Menjalankan APK di emulator atau HP Android fisik.
 
 Gunakan daftar uji manual di bawah setelah Supabase dikonfigurasi.
