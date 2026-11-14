@@ -1,0 +1,5 @@
+# Dependensi backend untuk deploy Vercel (sama dengan backend/requirements.txt tanpa uvicorn)
+fastapi>=0.115
+httpx>=0.27
+python-dotenv>=1.0
+pydantic>=2.8

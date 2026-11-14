@@ -1,6 +1,9 @@
 import { supabase } from './supabase';
 
-export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+// Tidak diisi di build produksi web = backend di domain yang sama (deploy Vercel: /api/*).
+// Pengembangan lokal = http://localhost:8000. Android (Capacitor) wajib mengisi VITE_API_URL.
+const RAW_API = import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? '' : 'http://localhost:8000');
+export const API_URL = RAW_API.replace(/\/$/, '');
 
 export class ApiError extends Error {
   constructor(message, status) {
