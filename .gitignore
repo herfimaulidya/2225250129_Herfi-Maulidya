@@ -1,0 +1,22 @@
+# Rahasia
+.env
+*.env.local
+
+# Python
+backend/.venv/
+__pycache__/
+.pytest_cache/
+
+# Node / build
+frontend/node_modules/
+frontend/dist/
+
+# Android build
+frontend/android/.gradle/
+frontend/android/app/build/
+frontend/android/build/
+frontend/android/local.properties
+
+# E2E
+e2e/node_modules/
+e2e/screens/

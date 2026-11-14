@@ -1,0 +1,8 @@
+{
+  "name": "royal-adventure-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Uji end-to-end ROYAL ADVENTURE dengan Playwright (lihat docs/testing.md)",
+  "scripts": { "test": "node run-e2e.mjs" },
+  "devDependencies": { "playwright": "^1.48.0" }
+}

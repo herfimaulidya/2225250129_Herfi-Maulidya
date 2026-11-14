@@ -1,0 +1,7 @@
+{
+  "appId": "id.royaladventure.app",
+  "appName": "Royal Adventure",
+  "webDir": "dist",
+  "android": { "allowMixedContent": true },
+  "server": { "androidScheme": "https", "cleartext": true }
+}
